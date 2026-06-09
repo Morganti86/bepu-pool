@@ -74,7 +74,7 @@
 <hr class="divider" />
 
 <!-- ADMIN -->
-<div class="admin-row">
+  <div class="admin-row" style="display: none;">
   <button class="admin-link" onclick="toggleAdmin()">
     ⚙ gestionar
   </button>
@@ -209,9 +209,6 @@ async function loadEntries() {
           </td>
           <td>${escapeHtml(e.date)}</td>
           <td><span class="tbl-badge">${weight}</span></td>
-          <td>
-            <button class="btn-row-del" title="Borrar" onclick="deleteOne('${e.id}')">🗑</button>
-          </td>
         </tr>
       `;
     }).join("");
@@ -264,11 +261,13 @@ async function deleteAll() {
   loadEntries();
 }
 
+/*
 async function deleteOne(id) {
   if (!id) return;
   await fetch(`${API}/${id}`, { method: "DELETE" });
   loadEntries();
 }
+*/
 
 
 /* INIT */

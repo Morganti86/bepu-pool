@@ -1,7 +1,8 @@
 :root {
   --blue-main: #2f6fed;
   --blue-soft: #5b8cff;
-  --blue-dark: #1f4fbf;
+  --blue-dark: #5C8BFF;
+;
 
   --text-main: #1f2937;
   --text-muted: #4b5563;
@@ -72,7 +73,7 @@ body {
 .hero-parents {
   font-family: 'Playfair Display', serif;
   font-style: italic;
-  font-size: 1.50rem;
+  font-size: 1.80rem;
   color: var(--text-main);
   margin-bottom: 0.7rem;
 }
@@ -193,7 +194,8 @@ input:focus {
   width: 100%;
   padding: 13px;
 
-  background: linear-gradient(135deg, var(--blue-main), var(--blue-dark));
+  background-color: #5C8BFF;
+
   color: white;
 
   border: none;
@@ -314,7 +316,7 @@ input:focus {
     }
 
     .entries-table thead tr {
-      background: var(--blue-soft, #4a90d9);
+      background: var(--text-muted, --text-main);
       color: #fff;
     }
 
