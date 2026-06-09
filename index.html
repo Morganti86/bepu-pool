@@ -52,12 +52,12 @@
 
     <div class="weight-row">
       <div>
-        <label class="hint">Kilos</label>
+        <label class="hint">Kilos (0 - 9)</label>
         <input type="number" id="inp-kg" min="2" max="5" />
       </div>
 
       <div>
-        <label class="hint">Gramos</label>
+        <label class="hint">Gramos (0 - 999)</label>
         <input type="number" id="inp-g" min="0" max="999" />
       </div>
     </div>
@@ -108,14 +108,12 @@
 <script>
 const API = "/api/guesses";
 
-/* =========================
-   SUBMIT
-========================= */
 async function submitGuess() {
   const name = document.getElementById("inp-name").value.trim();
   const date = document.getElementById("inp-date").value;
-  const kg = document.getElementById("inp-kg").value;
-  const g = document.getElementById("inp-g").value;
+
+  const kgRaw = document.getElementById("inp-kg").value;
+  const gRaw  = document.getElementById("inp-g").value;
 
   const err = document.getElementById("msg-error");
   const ok = document.getElementById("msg-success");
@@ -124,11 +122,30 @@ async function submitGuess() {
   ok.style.display = "none";
 
   // VALIDACIÓN OBLIGATORIA
-  if (!name || !date || kg === "" || g === "") {
+  if (!name || !date || kgRaw === "" || gRaw === "") {
     err.textContent = "❌ Completá todos los campos";
     err.style.display = "block";
     return;
   }
+
+  const kg = parseInt(kgRaw, 10);
+  const g  = parseInt(gRaw, 10);
+
+  // Validar kilos: 0–9
+  if (isNaN(kg) || kg < 0 || kg > 9) {
+    err.textContent = "❌ Los kilos deben ser un número entre 0 y 9";
+    err.style.display = "block";
+    return;
+  }
+
+  // Validar gramos: 0–999
+  if (isNaN(g) || g < 0 || g > 999) {
+    err.textContent = "❌ Los gramos deben estar entre 000 y 999";
+    err.style.display = "block";
+    return;
+  }
+
+  const gFormatted = String(g).padStart(3, "0");
 
   try {
     const res = await fetch(API, {
@@ -148,6 +165,11 @@ async function submitGuess() {
     ok.textContent = "🎉 Pronóstico enviado";
     ok.style.display = "block";
 
+    document.getElementById("inp-name").value = "";
+    document.getElementById("inp-date").value = "";
+    document.getElementById("inp-kg").value = "";
+    document.getElementById("inp-g").value = "";
+
     loadEntries();
 
   } catch (e) {
@@ -157,37 +179,71 @@ async function submitGuess() {
 }
 
 /* =========================
-   LOAD ENTRIES
+   LOAD ENTRIES – tabla
 ========================= */
 async function loadEntries() {
   const container = document.getElementById("entries-list");
 
   try {
-    const res = await fetch(API);
+    const res  = await fetch(API);
     const data = await res.json();
 
     document.getElementById("counter").textContent =
-      `${data.length} pronósticos`;
+      `${data.length} pronóstico${data.length !== 1 ? "s" : ""}`;
 
     if (!data.length) {
       container.innerHTML = "<div class='empty'>Aún no hay pronósticos</div>";
       return;
     }
 
-    container.innerHTML = data.map(e => `
-      <div class="entry">
-        <div class="avatar">${e.name[0]}</div>
-        <div>
-          <div class="entry-name">${e.name}</div>
-          <div class="entry-sub">${e.date}</div>
-        </div>
-        <div class="badge">${e.kg},${e.g}</div>
+    const rows = data.map((e, i) => {
+      const initial = e.name.charAt(0).toUpperCase();
+      const weight  = `${e.kg} kg ${String(e.g).padStart(3,"0")} g`;
+      return `
+        <tr>
+          <td>
+            <div class="tbl-name-cell">
+              <span class="tbl-avatar">${initial}</span>
+              ${escapeHtml(e.name)}
+            </div>
+          </td>
+          <td>${escapeHtml(e.date)}</td>
+          <td><span class="tbl-badge">${weight}</span></td>
+          <td>
+            <button class="btn-row-del" title="Borrar" onclick="deleteOne('${e.id}')">🗑</button>
+          </td>
+        </tr>
+      `;
+    }).join("");
+
+    container.innerHTML = `
+      <div class="table-wrapper">
+        <table class="entries-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Fecha</th>
+              <th>Peso</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
       </div>
-    `).join("");
+    `;
 
   } catch (e) {
     container.innerHTML = "<div class='empty'>Error cargando datos</div>";
   }
+}
+
+/* Escapar HTML para evitar XSS */
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;");
 }
 
 /* =========================
@@ -207,6 +263,13 @@ async function deleteAll() {
 
   loadEntries();
 }
+
+async function deleteOne(id) {
+  if (!id) return;
+  await fetch(`${API}/${id}`, { method: "DELETE" });
+  loadEntries();
+}
+
 
 /* INIT */
 loadEntries();
