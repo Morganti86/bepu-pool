@@ -417,6 +417,10 @@ input:focus {
     padding: 1.5rem 0.75rem 3rem;
   }
 
+  .entries-table {
+    font-size: 0.8rem;
+  }
+
   .weight-row {
     grid-template-columns: 1fr;
   }
