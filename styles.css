@@ -150,7 +150,7 @@ body {
   gap: 12px;
 }
 
-.weight-row > div {
+.weight-row>div {
   display: flex;
   flex-direction: column;
 }
@@ -317,7 +317,7 @@ input:focus {
 .entries-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   margin-top: 0.5rem;
 }
 
@@ -338,6 +338,7 @@ input:focus {
 
 .entries-table td {
   padding: 0.6rem 0.85rem;
+  font-size: 0.75rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.07);
   vertical-align: middle;
   white-space: nowrap;
@@ -404,8 +405,13 @@ input:focus {
    desktop → .date-long  visible  ("01-07-2026")
 ========================= */
 
-.date-short { display: inline; }
-.date-long  { display: none;   }
+.date-short {
+  display: inline;
+}
+
+.date-long {
+  display: none;
+}
 
 /* =========================
    RESPONSIVE
@@ -425,6 +431,11 @@ input:focus {
 }
 
 @media (min-width: 481px) {
-  .date-short { display: none;   }
-  .date-long  { display: inline; }
+  .date-short {
+    display: none;
+  }
+
+  .date-long {
+    display: inline;
+  }
 }
