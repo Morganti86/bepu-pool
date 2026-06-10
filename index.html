@@ -1,230 +1,226 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Bepu Pool</title>
-  <link rel="icon" href="/favicon.ico">
-  <link rel="icon" type="image/png" href="/favicon.png">
+
   <link rel="stylesheet" href="styles.css" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700;800&display=swap"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet"/>
 </head>
 
 <body>
 
-  <div class="inner">
+<div class="inner">
 
-    <!-- HERO -->
-    <div class="hero">
-      <div class="hero-icon">🍼</div>
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-icon">🍼</div>
 
-      <h1 class="hero-title">Bepu Pool</h1>
+  <h1 class="hero-title">Bepu Pool</h1>
 
-      <p class="hero-parents">
-        Gretel Seyahian y Adrien Wiedmann esperan a su niño 💙
-      </p>
+  <p class="hero-parents">
+    Gretel Seyahian y Adrien Wiedmann esperan a su niño 💙
+  </p>
 
-      <p class="hero-tagline">
-        ¿Cuándo llegará? ¿Cuánto pesará?<br>
-        <strong>Apurate</strong> para dejar tu pronóstico y descubrir quién le atina!
-      </p>
+  <p class="hero-tagline">
+    ¿Cuándo llegará? ¿Cuánto pesará?<br>
+    <strong>Apurate</strong> para dejar tu pronóstico y descubrir quién le atina!
+  </p>
 
-      <span class="hero-warning">
-        🚫 Prohibido copiarse y repetir resultados! Se busca un solo ganador...
-      </span>
-    </div>
+  <span class="hero-warning">
+    🚫 Prohibido copiarse y repetir resultados! Se busca un solo ganador...
+  </span>
+</div>
 
-    <!-- FORM -->
-    <div class="card">
-      <div class="card-title">✏️ Dejar mi pronóstico</div>
+<!-- FORM -->
+<div class="card">
+  <div class="card-title">✏️ Dejar mi pronóstico</div>
 
-      <div class="field">
-        <label class="label">Tu nombre</label>
-        <input type="text" id="inp-name" maxlength="50" />
-      </div>
-
-      <div class="field">
-        <label class="label">Fecha de nacimiento</label>
-        <input type="date" id="inp-date" />
-      </div>
-
-      <div class="field">
-        <label class="label">Peso del bebé</label>
-
-        <div class="weight-row">
-          <div>
-            <label class="hint">Kilos (0 - 9)</label>
-            <input type="number" id="inp-kg" min="2" max="5" />
-          </div>
-
-          <div>
-            <label class="hint">Gramos (0 - 999)</label>
-            <input type="number" id="inp-g" min="0" max="999" />
-          </div>
-        </div>
-      </div>
-
-      <button class="btn-submit" onclick="submitGuess()">
-        🎯 Enviar pronóstico
-      </button>
-
-      <div class="msg error" id="msg-error"></div>
-      <div class="msg success" id="msg-success"></div>
-    </div>
-
-    <hr class="divider" />
-
-    <!-- ADMIN -->
-    <div class="admin-row" style="display: none;">
-      <button class="admin-link" onclick="toggleAdmin()">
-        ⚙ gestionar
-      </button>
-    </div>
-
-    <div class="admin-panel" id="admin-panel">
-      <div class="card" style="padding:1.1rem;">
-        <p style="font-weight:600; color: var(--blue-soft); margin-bottom:0.5rem;">
-          Panel de administración
-        </p>
-
-        <p class="admin-desc">
-          Podés borrar pronósticos o eliminar todo.
-        </p>
-
-        <button class="btn-danger" onclick="deleteAll()">
-          🗑 Borrar todos los pronósticos
-        </button>
-      </div>
-    </div>
-
-    <!-- RESULTS -->
-    <div class="results-title">🏆 Pronósticos</div>
-    <div class="counter" id="counter"></div>
-    <div id="entries-list">
-      <div class="loading-spinner">Cargando pronósticos...</div>
-    </div>
-
+  <div class="field">
+    <label class="label">Tu nombre</label>
+    <input type="text" id="inp-name" maxlength="50" />
   </div>
 
-  <script>
-    const API = "/api/guesses";
+  <div class="field">
+    <label class="label">Fecha de nacimiento</label>
+    <input type="date" id="inp-date" />
+  </div>
 
-    /* =========================
-       FECHAS
-    ========================= */
+  <div class="field">
+    <label class="label">Peso del bebé</label>
 
-    /* Mobile: "1 jul"  — Desktop: "01-07-2026" */
-    const MONTHS_ES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+    <div class="weight-row">
+      <div>
+        <label class="hint">Kilos (0 - 9)</label>
+        <input type="number" id="inp-kg" min="2" max="5" />
+      </div>
 
-    function formatDateShort(str) {
-      // str = "YYYY-MM-DD"
-      const [y, m, d] = str.split("-");
-      if (!y || !m || !d) return str;
-      const monthName = MONTHS_ES[parseInt(m, 10) - 1] || m;
-      return `${parseInt(d, 10)} ${monthName}`;
+      <div>
+        <label class="hint">Gramos (0 - 999)</label>
+        <input type="number" id="inp-g" min="0" max="999" />
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-submit" onclick="submitGuess()">
+    🎯 Enviar pronóstico
+  </button>
+
+  <div class="msg error" id="msg-error"></div>
+  <div class="msg success" id="msg-success"></div>
+</div>
+
+<hr class="divider" />
+
+<!-- ADMIN -->
+<div class="admin-row" style="display: none;">
+  <button class="admin-link" onclick="toggleAdmin()">
+    ⚙ gestionar
+  </button>
+</div>
+
+<div class="admin-panel" id="admin-panel">
+  <div class="card" style="padding:1.1rem;">
+    <p style="font-weight:600; color: var(--blue-soft); margin-bottom:0.5rem;">
+      Panel de administración
+    </p>
+
+    <p class="admin-desc">
+      Podés borrar pronósticos o eliminar todo.
+    </p>
+
+    <button class="btn-danger" onclick="deleteAll()">
+      🗑 Borrar todos los pronósticos
+    </button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div class="results-title">🏆 Pronósticos</div>
+<div class="counter" id="counter"></div>
+<div id="entries-list">
+  <div class="loading-spinner">Cargando pronósticos...</div>
+</div>
+
+</div>
+
+<script>
+const API = "/api/guesses";
+
+/* =========================
+   FECHAS
+========================= */
+
+/* Mobile: "1 jul"  — Desktop: "01-07-2026" */
+const MONTHS_ES = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+
+function formatDateShort(str) {
+  // str = "YYYY-MM-DD"
+  const [y, m, d] = str.split("-");
+  if (!y || !m || !d) return str;
+  const monthName = MONTHS_ES[parseInt(m, 10) - 1] || m;
+  return `${parseInt(d, 10)} ${monthName}`;
+}
+
+function formatDateLong(str) {
+  const [y, m, d] = str.split("-");
+  if (!y || !m || !d) return str;
+  return `${d}-${m}-${y}`;
+}
+
+/* =========================
+   SUBMIT
+========================= */
+async function submitGuess() {
+  const name  = document.getElementById("inp-name").value.trim();
+  const date  = document.getElementById("inp-date").value;
+  const kgRaw = document.getElementById("inp-kg").value;
+  const gRaw  = document.getElementById("inp-g").value;
+
+  const err = document.getElementById("msg-error");
+  const ok  = document.getElementById("msg-success");
+
+  err.style.display = "none";
+  ok.style.display  = "none";
+
+  if (!name || !date || kgRaw === "" || gRaw === "") {
+    err.textContent = "❌ Completá todos los campos";
+    err.style.display = "block";
+    return;
+  }
+
+  const kg = parseInt(kgRaw, 10);
+  const g  = parseInt(gRaw,  10);
+
+  if (isNaN(kg) || kg < 0 || kg > 9) {
+    err.textContent = "❌ Los kilos deben ser un número entre 0 y 9";
+    err.style.display = "block";
+    return;
+  }
+
+  if (isNaN(g) || g < 0 || g > 999) {
+    err.textContent = "❌ Los gramos deben estar entre 000 y 999";
+    err.style.display = "block";
+    return;
+  }
+
+  try {
+    const res = await fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, date, kg, g })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      err.textContent = data.error || "Error";
+      err.style.display = "block";
+      return;
     }
 
-    function formatDateLong(str) {
-      const [y, m, d] = str.split("-");
-      if (!y || !m || !d) return str;
-      return `${d}-${m}-${y}`;
+    ok.textContent = "🎉 Pronóstico enviado";
+    ok.style.display = "block";
+
+    document.getElementById("inp-name").value = "";
+    document.getElementById("inp-date").value = "";
+    document.getElementById("inp-kg").value   = "";
+    document.getElementById("inp-g").value    = "";
+
+    loadEntries();
+
+  } catch (e) {
+    err.textContent = "Error de conexión";
+    err.style.display = "block";
+  }
+}
+
+/* =========================
+   LOAD ENTRIES
+========================= */
+async function loadEntries() {
+  const container = document.getElementById("entries-list");
+
+  try {
+    const res  = await fetch(API);
+    const data = await res.json();
+
+    document.getElementById("counter").textContent =
+      `${data.length} pronóstico${data.length !== 1 ? "s" : ""}`;
+
+    if (!data.length) {
+      container.innerHTML = "<div class='empty'>Aún no hay pronósticos</div>";
+      return;
     }
 
-    /* =========================
-       SUBMIT
-    ========================= */
-    async function submitGuess() {
-      const name = document.getElementById("inp-name").value.trim();
-      const date = document.getElementById("inp-date").value;
-      const kgRaw = document.getElementById("inp-kg").value;
-      const gRaw = document.getElementById("inp-g").value;
+    const rows = data.map(e => {
+      const initial   = e.name.charAt(0).toUpperCase();
+      const weight    = `${e.kg}.${String(e.g).padStart(3, "0")}`;
+      const dateShort = escapeHtml(formatDateShort(e.date));
+      const dateLong  = escapeHtml(formatDateLong(e.date));
 
-      const err = document.getElementById("msg-error");
-      const ok = document.getElementById("msg-success");
-
-      err.style.display = "none";
-      ok.style.display = "none";
-
-      if (!name || !date || kgRaw === "" || gRaw === "") {
-        err.textContent = "❌ Completá todos los campos";
-        err.style.display = "block";
-        return;
-      }
-
-      const kg = parseInt(kgRaw, 10);
-      const g = parseInt(gRaw, 10);
-
-      if (isNaN(kg) || kg < 0 || kg > 9) {
-        err.textContent = "❌ Los kilos deben ser un número entre 0 y 9";
-        err.style.display = "block";
-        return;
-      }
-
-      if (isNaN(g) || g < 0 || g > 999) {
-        err.textContent = "❌ Los gramos deben estar entre 000 y 999";
-        err.style.display = "block";
-        return;
-      }
-
-      try {
-        const res = await fetch(API, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, date, kg, g })
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-          err.textContent = data.error || "Error";
-          err.style.display = "block";
-          return;
-        }
-
-        ok.textContent = "🎉 Pronóstico enviado";
-        ok.style.display = "block";
-
-        document.getElementById("inp-name").value = "";
-        document.getElementById("inp-date").value = "";
-        document.getElementById("inp-kg").value = "";
-        document.getElementById("inp-g").value = "";
-
-        loadEntries();
-
-      } catch (e) {
-        err.textContent = "Error de conexión";
-        err.style.display = "block";
-      }
-    }
-
-    /* =========================
-       LOAD ENTRIES
-    ========================= */
-    async function loadEntries() {
-      const container = document.getElementById("entries-list");
-
-      try {
-        const res = await fetch(API);
-        const data = await res.json();
-
-        document.getElementById("counter").textContent =
-          `${data.length} pronóstico${data.length !== 1 ? "s" : ""}`;
-
-        if (!data.length) {
-          container.innerHTML = "<div class='empty'>Aún no hay pronósticos</div>";
-          return;
-        }
-
-        const rows = data.map(e => {
-          const initial = e.name.charAt(0).toUpperCase();
-          const weight = `${e.kg} kg ${String(e.g).padStart(3, "0")} g`;
-          const dateShort = escapeHtml(formatDateShort(e.date));
-          const dateLong = escapeHtml(formatDateLong(e.date));
-
-          return `
+      return `
         <tr>
           <td>
             <div class="tbl-name-cell">
@@ -239,16 +235,16 @@
           <td><span class="tbl-badge">${weight}</span></td>
         </tr>
       `;
-        }).join("");
+    }).join("");
 
-        container.innerHTML = `
+    container.innerHTML = `
       <div class="table-wrapper">
         <table class="entries-table">
           <thead>
             <tr>
               <th>Nombre</th>
               <th>Fecha</th>
-              <th>Peso</th>
+              <th>Peso (kg)</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
@@ -256,41 +252,40 @@
       </div>
     `;
 
-      } catch (e) {
-        container.innerHTML = "<div class='empty'>Error cargando datos</div>";
-      }
-    }
+  } catch (e) {
+    container.innerHTML = "<div class='empty'>Error cargando datos</div>";
+  }
+}
 
-    /* Escapar HTML para evitar XSS */
-    function escapeHtml(str) {
-      return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
-    }
+/* Escapar HTML para evitar XSS */
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
 
-    /* =========================
-       ADMIN
-    ========================= */
-    function toggleAdmin() {
-      const panel = document.getElementById("admin-panel");
-      panel.style.display = panel.style.display === "block" ? "none" : "block";
-    }
+/* =========================
+   ADMIN
+========================= */
+function toggleAdmin() {
+  const panel = document.getElementById("admin-panel");
+  panel.style.display = panel.style.display === "block" ? "none" : "block";
+}
 
-    async function deleteAll() {
-      await fetch(API, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ all: true })
-      });
-      loadEntries();
-    }
+async function deleteAll() {
+  await fetch(API, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ all: true })
+  });
+  loadEntries();
+}
 
-    /* INIT */
-    loadEntries();
-  </script>
+/* INIT */
+loadEntries();
+</script>
 
 </body>
-
 </html>
