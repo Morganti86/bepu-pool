@@ -13,59 +13,58 @@
 
 <div class="inner">
 
+<!-- LANG SWITCHER -->
+<div class="lang-switcher">
+  <button class="lang-btn active" id="btn-es" onclick="setLang('es')" title="Español">
+    <img src="https://flagcdn.com/ar.svg" alt="Argentina" />
+  </button>
+  <button class="lang-btn" id="btn-fr" onclick="setLang('fr')" title="Français">
+    <img src="https://flagcdn.com/fr.svg" alt="France" />
+  </button>
+</div>
+
 <!-- HERO -->
 <div class="hero">
   <div class="hero-icon">🍼</div>
-
   <h1 class="hero-title">Bepu Pool</h1>
 
-  <p class="hero-parents">
-    Gretel Seyahian y Adrien Wiedmann esperan a su niño 💙
-  </p>
+  <p class="hero-parents" data-i18n="parents"></p>
 
-  <p class="hero-tagline">
-    ¿Cuándo llegará? ¿Cuánto pesará?<br>
-    <strong>Apurate</strong> para dejar tu pronóstico y descubrir quién le atina!
-  </p>
+  <p class="hero-tagline" data-i18n="tagline"></p>
 
-  <span class="hero-warning">
-    🚫 Prohibido copiarse y repetir resultados! Se busca un solo ganador...
-  </span>
+  <span class="hero-warning" data-i18n="warning"></span>
 </div>
 
 <!-- FORM -->
 <div class="card">
-  <div class="card-title">✏️ Dejar mi pronóstico</div>
+  <div class="card-title" data-i18n="formTitle"></div>
 
   <div class="field">
-    <label class="label">Tu nombre</label>
+    <label class="label" data-i18n="labelName"></label>
     <input type="text" id="inp-name" maxlength="50" />
   </div>
 
   <div class="field">
-    <label class="label">Fecha de nacimiento</label>
+    <label class="label" data-i18n="labelDate"></label>
     <input type="date" id="inp-date" />
   </div>
 
   <div class="field">
-    <label class="label">Peso del bebé</label>
+    <label class="label" data-i18n="labelWeight"></label>
 
     <div class="weight-row">
       <div>
-        <label class="hint">Kilos (0 - 9)</label>
+        <label class="hint" data-i18n="hintKg"></label>
         <input type="number" id="inp-kg" min="2" max="5" />
       </div>
-
       <div>
-        <label class="hint">Gramos (0 - 999)</label>
+        <label class="hint" data-i18n="hintG"></label>
         <input type="number" id="inp-g" min="0" max="999" />
       </div>
     </div>
   </div>
 
-  <button class="btn-submit" onclick="submitGuess()">
-    🎯 Enviar pronóstico
-  </button>
+  <button class="btn-submit" onclick="submitGuess()" data-i18n="btnSubmit"></button>
 
   <div class="msg error" id="msg-error"></div>
   <div class="msg success" id="msg-success"></div>
@@ -75,51 +74,129 @@
 
 <!-- ADMIN -->
 <div class="admin-row" style="display: none;">
-  <button class="admin-link" onclick="toggleAdmin()">
-    ⚙ gestionar
-  </button>
+  <button class="admin-link" onclick="toggleAdmin()" data-i18n="adminLink"></button>
 </div>
 
 <div class="admin-panel" id="admin-panel">
   <div class="card" style="padding:1.1rem;">
-    <p style="font-weight:600; color: var(--blue-soft); margin-bottom:0.5rem;">
-      Panel de administración
-    </p>
-
-    <p class="admin-desc">
-      Podés borrar pronósticos o eliminar todo.
-    </p>
-
-    <button class="btn-danger" onclick="deleteAll()">
-      🗑 Borrar todos los pronósticos
-    </button>
+    <p style="font-weight:600; color: var(--blue-soft); margin-bottom:0.5rem;" data-i18n="adminTitle"></p>
+    <p class="admin-desc" data-i18n="adminDesc"></p>
+    <button class="btn-danger" onclick="deleteAll()" data-i18n="btnDeleteAll"></button>
   </div>
 </div>
 
 <!-- RESULTS -->
-<div class="results-title">🏆 Pronósticos</div>
+<div class="results-title" data-i18n="resultsTitle"></div>
 <div class="counter" id="counter"></div>
 <div id="entries-list">
-  <div class="loading-spinner">Cargando pronósticos...</div>
+  <div class="loading-spinner" data-i18n="loading"></div>
 </div>
 
 </div>
 
 <script>
-const API = "/api/guesses";
+/* =========================
+   TRADUCCIONES
+========================= */
+const TRANSLATIONS = {
+  es: {
+    parents:      'Gretel Seyahian y Adrien Wiedmann esperan a su niño 💙',
+    tagline:      '¿Cuándo llegará? ¿Cuánto pesará?<br><strong>Apurate</strong> para dejar tu pronóstico y descubrir quién le atina!',
+    warning:      '🚫 Prohibido copiarse y repetir resultados! Se busca un solo ganador...',
+    formTitle:    '✏️ Dejar mi pronóstico',
+    labelName:    'Tu nombre',
+    labelDate:    'Fecha de nacimiento',
+    labelWeight:  'Peso del bebé',
+    hintKg:       'Kilos (0 - 9)',
+    hintG:        'Gramos (0 - 999)',
+    btnSubmit:    '🎯 Enviar pronóstico',
+    adminLink:    '⚙ gestionar',
+    adminTitle:   'Panel de administración',
+    adminDesc:    'Podés borrar pronósticos o eliminar todo.',
+    btnDeleteAll: '🗑 Borrar todos los pronósticos',
+    resultsTitle: '🏆 Pronósticos',
+    loading:      'Cargando pronósticos...',
+    empty:        'Aún no hay pronósticos',
+    loadError:    'Error cargando datos',
+    thName:       'Nombre',
+    thDate:       'Fecha',
+    thWeight:     'Peso (kg)',
+    errRequired:  '❌ Completá todos los campos',
+    errKg:        '❌ Los kilos deben ser un número entre 0 y 9',
+    errG:         '❌ Los gramos deben estar entre 000 y 999',
+    errConn:      'Error de conexión',
+    successMsg:   '🎉 Pronóstico enviado',
+    counterSingular: 'pronóstico',
+    counterPlural:   'pronósticos',
+  },
+  fr: {
+    parents:      'Gretel Seyahian et Adrien Wiedmann attendent leur petit garçon 💙',
+    tagline:      'Quand arrivera-t-il ? Combien pèsera-t-il ?<br><strong>Dépêchez-vous</strong> de laisser votre pronostic et de découvrir qui a raison !',
+    warning:      '🚫 Interdit de copier ou de répéter un résultat ! On cherche un seul gagnant...',
+    formTitle:    '✏️ Laisser mon pronostic',
+    labelName:    'Votre prénom',
+    labelDate:    'Date de naissance',
+    labelWeight:  'Poids du bébé',
+    hintKg:       'Kilos (0 - 9)',
+    hintG:        'Grammes (0 - 999)',
+    btnSubmit:    '🎯 Envoyer mon pronostic',
+    adminLink:    '⚙ gérer',
+    adminTitle:   'Panneau d\'administration',
+    adminDesc:    'Vous pouvez supprimer des pronostics ou tout effacer.',
+    btnDeleteAll: '🗑 Supprimer tous les pronostics',
+    resultsTitle: '🏆 Pronostics',
+    loading:      'Chargement des pronostics...',
+    empty:        'Aucun pronostic pour l\'instant',
+    loadError:    'Erreur lors du chargement',
+    thName:       'Prénom',
+    thDate:       'Date',
+    thWeight:     'Poids (kg)',
+    errRequired:  '❌ Veuillez remplir tous les champs',
+    errKg:        '❌ Les kilos doivent être un nombre entre 0 et 9',
+    errG:         '❌ Les grammes doivent être entre 000 et 999',
+    errConn:      'Erreur de connexion',
+    successMsg:   '🎉 Pronostic envoyé !',
+    counterSingular: 'pronostic',
+    counterPlural:   'pronostics',
+  }
+};
+
+let currentLang = localStorage.getItem('bepuLang') || 'es';
+
+function t(key) {
+  return TRANSLATIONS[currentLang][key] || TRANSLATIONS['es'][key] || key;
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('bepuLang', lang);
+
+  // Actualizar botones
+  document.getElementById('btn-es').classList.toggle('active', lang === 'es');
+  document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+  document.documentElement.lang = lang;
+
+  // Actualizar todos los elementos con data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    el.innerHTML = t(key);
+  });
+
+  // Refrescar la lista para traducir encabezados y textos dinámicos
+  loadEntries();
+}
 
 /* =========================
    FECHAS
 ========================= */
-
-/* Mobile: "1 jul"  — Desktop: "01-07-2026" */
 const MONTHS_ES = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+const MONTHS_FR = ["jan","fév","mar","avr","mai","jun","jul","aoû","sep","oct","nov","déc"];
 
 function formatDateShort(str) {
-  // str = "YYYY-MM-DD"
   const [y, m, d] = str.split("-");
   if (!y || !m || !d) return str;
-  const monthName = MONTHS_ES[parseInt(m, 10) - 1] || m;
+  const months = currentLang === 'fr' ? MONTHS_FR : MONTHS_ES;
+  const monthName = months[parseInt(m, 10) - 1] || m;
   return `${parseInt(d, 10)} ${monthName}`;
 }
 
@@ -132,6 +209,8 @@ function formatDateLong(str) {
 /* =========================
    SUBMIT
 ========================= */
+const API = "/api/guesses";
+
 async function submitGuess() {
   const name  = document.getElementById("inp-name").value.trim();
   const date  = document.getElementById("inp-date").value;
@@ -145,7 +224,7 @@ async function submitGuess() {
   ok.style.display  = "none";
 
   if (!name || !date || kgRaw === "" || gRaw === "") {
-    err.textContent = "❌ Completá todos los campos";
+    err.textContent = t('errRequired');
     err.style.display = "block";
     return;
   }
@@ -154,13 +233,13 @@ async function submitGuess() {
   const g  = parseInt(gRaw,  10);
 
   if (isNaN(kg) || kg < 0 || kg > 9) {
-    err.textContent = "❌ Los kilos deben ser un número entre 0 y 9";
+    err.textContent = t('errKg');
     err.style.display = "block";
     return;
   }
 
   if (isNaN(g) || g < 0 || g > 999) {
-    err.textContent = "❌ Los gramos deben estar entre 000 y 999";
+    err.textContent = t('errG');
     err.style.display = "block";
     return;
   }
@@ -180,7 +259,7 @@ async function submitGuess() {
       return;
     }
 
-    ok.textContent = "🎉 Pronóstico enviado";
+    ok.textContent = t('successMsg');
     ok.style.display = "block";
 
     document.getElementById("inp-name").value = "";
@@ -191,7 +270,7 @@ async function submitGuess() {
     loadEntries();
 
   } catch (e) {
-    err.textContent = "Error de conexión";
+    err.textContent = t('errConn');
     err.style.display = "block";
   }
 }
@@ -206,11 +285,12 @@ async function loadEntries() {
     const res  = await fetch(API);
     const data = await res.json();
 
-    document.getElementById("counter").textContent =
-      `${data.length} pronóstico${data.length !== 1 ? "s" : ""}`;
+    const count = data.length;
+    const label = count === 1 ? t('counterSingular') : t('counterPlural');
+    document.getElementById("counter").textContent = `${count} ${label}`;
 
-    if (!data.length) {
-      container.innerHTML = "<div class='empty'>Aún no hay pronósticos</div>";
+    if (!count) {
+      container.innerHTML = `<div class='empty'>${t('empty')}</div>`;
       return;
     }
 
@@ -242,9 +322,9 @@ async function loadEntries() {
         <table class="entries-table">
           <thead>
             <tr>
-              <th>Nombre</th>
-              <th>Fecha</th>
-              <th>Peso (kg)</th>
+              <th>${t('thName')}</th>
+              <th>${t('thDate')}</th>
+              <th>${t('thWeight')}</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
@@ -253,11 +333,10 @@ async function loadEntries() {
     `;
 
   } catch (e) {
-    container.innerHTML = "<div class='empty'>Error cargando datos</div>";
+    container.innerHTML = `<div class='empty'>${t('loadError')}</div>`;
   }
 }
 
-/* Escapar HTML para evitar XSS */
 function escapeHtml(str) {
   return String(str)
     .replace(/&/g, "&amp;")
@@ -284,7 +363,7 @@ async function deleteAll() {
 }
 
 /* INIT */
-loadEntries();
+setLang(currentLang);
 </script>
 
 </body>
