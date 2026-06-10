@@ -337,7 +337,7 @@ input:focus {
 }
 
 .entries-table tbody tr {
-  background-color: var(--text-muted);
+  background-color: var(--text-hint);
 }
 
 .entries-table tbody tr:last-child td {
