@@ -2,9 +2,15 @@ import { kv } from '@vercel/kv';
 
 const KV_KEY = 'bepu_pool_guesses';
 
+async function getEntries() {
+  let entries = await kv.get(KV_KEY);
+  if (typeof entries === 'string') entries = JSON.parse(entries);
+  return entries || [];
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
@@ -14,8 +20,8 @@ export default async function handler(req, res) {
   // GET — devuelve todos los pronósticos
   if (req.method === 'GET') {
     try {
-      const entries = await kv.get(KV_KEY);
-      return res.status(200).json(entries || []);
+      const entries = await getEntries();
+      return res.status(200).json(entries);
     } catch (err) {
       return res.status(500).json({ error: 'Error al leer los datos.' });
     }
@@ -30,7 +36,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Datos incompletos.' });
       }
 
-      const entries = (await kv.get(KV_KEY)) || [];
+      const entries = await getEntries();
 
       // Validaciones de unicidad
       if (entries.some(e => e.name.toLowerCase() === name.toLowerCase())) {
@@ -74,7 +80,7 @@ export default async function handler(req, res) {
       }
 
       if (name) {
-        let entries = (await kv.get(KV_KEY)) || [];
+        let entries = await getEntries();
         entries = entries.filter(e => e.name.toLowerCase() !== name.toLowerCase());
         await kv.set(KV_KEY, entries);
         return res.status(200).json({ ok: true, entries });
