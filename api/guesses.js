@@ -4,7 +4,19 @@ const KV_KEY = 'bepu_pool_guesses';
 
 async function getEntries() {
   let entries = await kv.get(KV_KEY);
-  if (typeof entries === 'string') entries = JSON.parse(entries);
+  if (typeof entries === 'string') {
+    try {
+      entries = JSON.parse(entries);
+    } catch(e) {
+      // String sin comillas del CLI de Upstash — convertir a JSON válido
+      const fixed = entries
+        .replace(/\{([^}]+)\}/g, (match) => {
+          return match.replace(/(\w+(?:\s+\w+)*):/g, (m, key) => `"${key.trim()}":`)
+                      .replace(/:([^,}\]"]+)([,}\]])/g, (m, val, end) => `:"${val.trim()}"${end}`);
+        });
+      try { entries = JSON.parse(fixed); } catch(e2) { entries = []; }
+    }
+  }
   return entries || [];
 }
 
@@ -15,6 +27,50 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
+  }
+
+  // MIGRATE — lee el string malo, lo parsea y lo reescribe como objeto nativo
+  if (req.method === 'GET' && req.query.migrate === '1') {
+    try {
+      const raw = await kv.get(KV_KEY);
+      let entries = raw;
+      if (typeof entries === 'string') {
+        // Intentar JSON normal primero
+        try {
+          entries = JSON.parse(entries);
+        } catch(e) {
+          // Fallback: el formato sin comillas del CLI
+          // Usamos los datos hardcodeados que sabemos que son correctos
+          entries = [
+            {"name":"Belen","date":"2026-07-01","kg":3,"g":800,"submittedAt":"10 jun"},
+            {"name":"Tía agüela Marina","date":"2026-06-23","kg":3,"g":870,"submittedAt":"10 jun"},
+            {"name":"Mary","date":"2026-06-21","kg":3,"g":900,"submittedAt":"10 jun"},
+            {"name":"Cami","date":"2026-07-03","kg":3,"g":950,"submittedAt":"10 jun"},
+            {"name":"Dypi","date":"2026-07-04","kg":3,"g":801,"submittedAt":"10 jun"},
+            {"name":"Mariano","date":"2026-06-28","kg":4,"g":0,"submittedAt":"10 jun"},
+            {"name":"Abril","date":"2026-06-30","kg":3,"g":650,"submittedAt":"10 jun"},
+            {"name":"El ABUELO Sergio","date":"2026-06-29","kg":3,"g":85,"submittedAt":"10 jun"},
+            {"name":"Grando","date":"2026-07-02","kg":4,"g":200,"submittedAt":"10 jun"},
+            {"name":"Papá","date":"2026-06-27","kg":3,"g":850,"submittedAt":"10 jun"},
+            {"name":"Paola","date":"2026-06-20","kg":3,"g":150,"submittedAt":"10 jun"},
+            {"name":"Catherine","date":"2026-06-26","kg":3,"g":880,"submittedAt":"11 jun"},
+            {"name":"Chloé - Antoni","date":"2026-06-25","kg":3,"g":428,"submittedAt":"11 jun"},
+            {"name":"Murielle","date":"2026-06-22","kg":3,"g":750,"submittedAt":"11 jun"},
+            {"name":"Brice","date":"2026-07-24","kg":3,"g":834,"submittedAt":"11 jun"},
+            {"name":"Didier","date":"2026-06-19","kg":4,"g":195,"submittedAt":"11 jun"},
+            {"name":"Ghislaine","date":"2026-06-18","kg":3,"g":430,"submittedAt":"11 jun"},
+            {"name":"Mamie Thérèse","date":"2026-06-17","kg":3,"g":851,"submittedAt":"11 jun"},
+            {"name":"Agustina","date":"2026-06-24","kg":3,"g":330,"submittedAt":"11 jun"},
+            {"name":"Fernanda","date":"2026-07-05","kg":3,"g":200,"submittedAt":"12 jun"}
+          ];
+        }
+        await kv.set(KV_KEY, entries);
+        return res.status(200).json({ ok: true, migrated: true, count: entries.length, entries });
+      }
+      return res.status(200).json({ ok: true, migrated: false, message: 'Ya estaba en formato correcto', entries });
+    } catch(err) {
+      return res.status(500).json({ error: err.message });
+    }
   }
 
   // GET — devuelve todos los pronósticos
@@ -38,7 +94,6 @@ export default async function handler(req, res) {
 
       const entries = await getEntries();
 
-      // Validaciones de unicidad
       if (entries.some(e => e.name.toLowerCase() === name.toLowerCase())) {
         return res.status(409).json({ error: `"${name}" ya dejó su pronóstico. ¡Solo uno por persona!` });
       }
